@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  @apply bg-chalk text-ink font-sans;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Diagonal court-line accent, reused on the login hero and section dividers */
+.court-cut {
+  clip-path: polygon(0 0, 100% 0, 100% 78%, 0 100%);
+}
+
+.scoreboard-digit {
+  font-family: 'Bebas Neue', sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* thin top stripe used instead of card shadows */
+.stripe-top {
+  border-top: 3px solid var(--stripe-color, #E8A23D);
+}
+
+::-webkit-scrollbar { height: 6px; width: 6px; }
+::-webkit-scrollbar-thumb { background: #cfd3d0; border-radius: 3px; }
