@@ -11,7 +11,7 @@ export default function Modal({ title, onClose, children, footer }) {
             <X size={22} />
           </button>
         </div>
-        <div className="px-5 py-5 max-h-[70vh] overflow-y-auto">{children}</div>
+        <div className="px-5 py-5 max-h-[70vh] overflow-y-auto text-ink">{children}</div>
         {footer && <div className="px-5 py-4 border-t border-ink/10 bg-ink/[0.02]">{footer}</div>}
       </div>
     </div>

@@ -3,14 +3,24 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { supabase } from '../../lib/supabaseClient'
 import { useLiveMatch } from '../../hooks/useLiveMatch'
-import ScoreButton from '../../components/ScoreButton'
+import { useElapsedTimer } from '../../hooks/useElapsedTimer'
+import CounterCard from '../../components/CounterCard'
+import ScoreScreenActions from '../../components/ScoreScreenActions'
 import SetIndicator from '../../components/SetIndicator'
+import AddTeamModal from '../../components/AddTeamModal'
+import CreateMatchModal from '../../components/CreateMatchModal'
+import UpcomingMatchesModal from '../../components/UpcomingMatchesModal'
 
 export default function LiveScoreboardOrganiser() {
   const { matchId } = useParams()
   const navigate = useNavigate()
   const { match, sets, refresh } = useLiveMatch(matchId)
   const [confirmWinner, setConfirmWinner] = useState(null)
+  const [showAddTeam, setShowAddTeam] = useState(false)
+  const [showCreateMatch, setShowCreateMatch] = useState(false)
+  const [showUpcoming, setShowUpcoming] = useState(false)
+
+  const elapsed = useElapsedTimer(match?.started_at)
 
   if (!match) return null
 
@@ -77,21 +87,33 @@ export default function LiveScoreboardOrganiser() {
         <div className="text-center py-2 bg-falconAmber text-courtNavy font-bold text-sm">Match completed</div>
       )}
 
-      <div className="flex-1 grid grid-cols-2 gap-3 p-4">
-        {[
-          { label: match.team_a?.name || 'Team A', score: currentSet?.score_a ?? 0, setsWon: match.sets_won_a, key: 'A' },
-          { label: match.team_b?.name || 'Team B', score: currentSet?.score_b ?? 0, setsWon: match.sets_won_b, key: 'B' },
-        ].map((t) => (
-          <div key={t.key} className="bg-courtNavyLight rounded-lg flex flex-col items-center justify-between py-6 px-3">
-            <div className="text-center">
-              <p className="font-semibold text-chalk/70 truncate max-w-[120px]">{t.label}</p>
-              <p className="text-xs text-chalk/40">{t.setsWon} sets won</p>
-            </div>
-            <p className="scoreboard-digit text-8xl">{t.score}</p>
-            <ScoreButton onInc={() => updateScore(t.key, 1)} onDec={() => updateScore(t.key, -1)} disabled={match.status === 'completed'} />
-          </div>
-        ))}
+      <div className="flex-1 flex flex-col px-4 pt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+          <CounterCard
+            label={match.team_a?.name || 'Team A'}
+            sublabel={`${match.sets_won_a} sets won`}
+            score={currentSet?.score_a ?? 0}
+            onInc={() => updateScore('A', 1)}
+            onDec={() => updateScore('A', -1)}
+            disabled={match.status === 'completed'}
+          />
+          <CounterCard
+            label={match.team_b?.name || 'Team B'}
+            sublabel={`${match.sets_won_b} sets won`}
+            score={currentSet?.score_b ?? 0}
+            onInc={() => updateScore('B', 1)}
+            onDec={() => updateScore('B', -1)}
+            disabled={match.status === 'completed'}
+          />
+        </div>
+        <p className="text-center scoreboard-digit text-xl text-chalk/60 mb-4">{elapsed}</p>
       </div>
+
+      <ScoreScreenActions
+        onAddTeam={() => setShowAddTeam(true)}
+        onCreateMatch={() => setShowCreateMatch(true)}
+        onUpcoming={() => setShowUpcoming(true)}
+      />
 
       {confirmWinner && (
         <div className="fixed inset-0 bg-ink/60 flex items-center justify-center p-6 z-50">
@@ -106,6 +128,22 @@ export default function LiveScoreboardOrganiser() {
             </div>
           </div>
         </div>
+      )}
+
+      {showAddTeam && (
+        <AddTeamModal tournamentId={match.tournament_id} onClose={() => setShowAddTeam(false)} />
+      )}
+
+      {showCreateMatch && (
+        <CreateMatchModal tournamentId={match.tournament_id} onClose={() => setShowCreateMatch(false)} />
+      )}
+
+      {showUpcoming && (
+        <UpcomingMatchesModal
+          tournamentId={match.tournament_id}
+          excludeMatchId={match.id}
+          onClose={() => setShowUpcoming(false)}
+        />
       )}
     </div>
   )

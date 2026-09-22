@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ArrowLeft, RotateCcw } from 'lucide-react'
-import ScoreButton from '../../components/ScoreButton'
+import CounterCard from '../../components/CounterCard'
+import ScoreScreenActions from '../../components/ScoreScreenActions'
 import SetIndicator from '../../components/SetIndicator'
+import { useElapsedTimer } from '../../hooks/useElapsedTimer'
 
 export default function LocalScoreboard() {
   const { state } = useLocation()
@@ -16,7 +18,9 @@ export default function LocalScoreboard() {
   const [setsWonB, setSetsWonB] = useState(0)
   const [currentSet, setCurrentSet] = useState(1)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
+  const [startTime, setStartTime] = useState(() => Date.now())
 
+  const elapsed = useElapsedTimer(startTime)
   const setsToWin = Math.ceil(totalSets / 2)
 
   const checkSetWin = (a, b) => {
@@ -53,6 +57,7 @@ export default function LocalScoreboard() {
 
   const reset = () => {
     setScoreA(0); setScoreB(0); setSetsWonA(0); setSetsWonB(0); setCurrentSet(1)
+    setStartTime(Date.now())
     setShowResetConfirm(false)
   }
 
@@ -73,24 +78,36 @@ export default function LocalScoreboard() {
         </div>
       )}
 
-      <div className="flex-1 grid grid-cols-2 gap-3 p-4">
-        {[{ label: 'Team A', score: scoreA, sets: setsWonA, key: 'A' }, { label: 'Team B', score: scoreB, sets: setsWonB, key: 'B' }].map((t) => (
-          <div key={t.key} className="bg-courtNavyLight rounded-lg flex flex-col items-center justify-between py-6 px-3">
-            <div className="text-center">
-              <p className="font-semibold text-chalk/70">{t.label}</p>
-              <p className="text-xs text-chalk/40">{t.sets} sets won</p>
-            </div>
-            <p className="scoreboard-digit text-8xl">{t.score}</p>
-            <ScoreButton onInc={() => inc(t.key)} onDec={() => dec(t.key)} disabled={matchOver} />
-          </div>
-        ))}
+      <div className="flex-1 flex flex-col px-4 pt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+          <CounterCard
+            label="Team A"
+            sublabel={`${setsWonA} sets won`}
+            score={scoreA}
+            onInc={() => inc('A')}
+            onDec={() => dec('A')}
+            disabled={matchOver}
+          />
+          <CounterCard
+            label="Team B"
+            sublabel={`${setsWonB} sets won`}
+            score={scoreB}
+            onInc={() => inc('B')}
+            onDec={() => dec('B')}
+            disabled={matchOver}
+          />
+        </div>
+        <p className="text-center scoreboard-digit text-xl text-chalk/60 mb-4">{elapsed}</p>
       </div>
+
+      {/* Local matches are client-only, so team/match management is disabled here */}
+      <ScoreScreenActions disabled onAddTeam={undefined} onCreateMatch={undefined} />
 
       {showResetConfirm && (
         <div className="fixed inset-0 bg-ink/60 flex items-center justify-center p-6 z-50">
           <div className="bg-chalk text-ink rounded-lg p-5 w-full max-w-xs">
             <p className="font-semibold mb-1">Reset match?</p>
-            <p className="text-sm text-ink/60 mb-4">This clears the current score and sets. This can't be undone.</p>
+            <p className="text-sm text-ink/60 mb-4">This clears the current score, sets, and timer. This can't be undone.</p>
             <div className="flex gap-2">
               <button onClick={() => setShowResetConfirm(false)} className="flex-1 py-2 rounded border border-ink/15 font-semibold text-sm">Cancel</button>
               <button onClick={reset} className="flex-1 py-2 rounded bg-hawkRed text-white font-semibold text-sm">Reset</button>
