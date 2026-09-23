@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
 }
 
@@ -27,5 +29,18 @@ body {
   border-top: 3px solid var(--stripe-color, #E8A23D);
 }
 
-::-webkit-scrollbar { height: 6px; width: 6px; }
-::-webkit-scrollbar-thumb { background: #cfd3d0; border-radius: 3px; }
+/* OBS/browser-source overlay pages need a fully transparent page background
+   so the underlying video/game feed shows through anywhere the scorebug isn't drawn. */
+body.overlay-mode {
+  background: transparent !important;
+}
+
+::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cfd3d0;
+  border-radius: 3px;
+}

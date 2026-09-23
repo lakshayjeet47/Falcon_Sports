@@ -12,6 +12,7 @@ import LiveScoreboardOrganiser from './routes/organise/LiveScoreboardOrganiser'
 import JoinHome from './routes/join/JoinHome'
 import TournamentDetails from './routes/join/TournamentDetails'
 import LiveScoreViewer from './routes/join/LiveScoreViewer'
+import OverlayScoreboard from './routes/OverlayScoreboard'
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
@@ -39,6 +40,7 @@ export default function App() {
 
       {/* Shared live score viewer (used from dashboard "Live Now" and tournament ScoreBar) */}
       <Route path="/match/:matchId" element={<PrivateRoute><LiveScoreViewer /></PrivateRoute>} />
+      <Route path="/overlay/:matchCode" element={<OverlayScoreboard />} />
 
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
