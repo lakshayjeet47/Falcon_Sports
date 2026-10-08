@@ -1,6 +1,7 @@
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
+import HomeButton from './components/HomeButton'
 
 import Login from './routes/Login'
 import Dashboard from './routes/Dashboard'
@@ -23,26 +24,30 @@ function PrivateRoute({ children }) {
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+    <>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-      <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
 
-      <Route path="/organise" element={<PrivateRoute><OrganiseHome /></PrivateRoute>} />
-      <Route path="/organise/local-scoreboard" element={<PrivateRoute><LocalScoreboard /></PrivateRoute>} />
-      <Route path="/organise/tournament/:id" element={<PrivateRoute><TournamentManage /></PrivateRoute>} />
-      <Route path="/organise/tournament/:id/fixtures" element={<PrivateRoute><FixturesScreen /></PrivateRoute>} />
-      <Route path="/organise/live/:matchId" element={<PrivateRoute><LiveScoreboardOrganiser /></PrivateRoute>} />
+        <Route path="/organise" element={<PrivateRoute><OrganiseHome /></PrivateRoute>} />
+        <Route path="/organise/local-scoreboard" element={<PrivateRoute><LocalScoreboard /></PrivateRoute>} />
+        <Route path="/organise/tournament/:id" element={<PrivateRoute><TournamentManage /></PrivateRoute>} />
+        <Route path="/organise/tournament/:id/fixtures" element={<PrivateRoute><FixturesScreen /></PrivateRoute>} />
+        <Route path="/organise/live/:matchId" element={<PrivateRoute><LiveScoreboardOrganiser /></PrivateRoute>} />
 
-      <Route path="/join" element={<PrivateRoute><JoinHome /></PrivateRoute>} />
-      <Route path="/join/tournament/:id" element={<PrivateRoute><TournamentDetails /></PrivateRoute>} />
+        <Route path="/join" element={<PrivateRoute><JoinHome /></PrivateRoute>} />
+        <Route path="/join/tournament/:id" element={<PrivateRoute><TournamentDetails /></PrivateRoute>} />
 
-      {/* Shared live score viewer (used from dashboard "Live Now" and tournament ScoreBar) */}
-      <Route path="/match/:matchId" element={<PrivateRoute><LiveScoreViewer /></PrivateRoute>} />
-      <Route path="/overlay/:matchCode" element={<OverlayScoreboard />} />
+        {/* Shared live score viewer (used from dashboard "Live Now" and tournament ScoreBar) */}
+        <Route path="/match/:matchId" element={<PrivateRoute><LiveScoreViewer /></PrivateRoute>} />
+        <Route path="/overlay/:matchCode" element={<OverlayScoreboard />} />
 
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
-    </Routes>
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
+
+      <HomeButton />
+    </>
   )
 }
