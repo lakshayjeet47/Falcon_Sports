@@ -14,6 +14,8 @@ import JoinHome from './routes/join/JoinHome'
 import TournamentDetails from './routes/join/TournamentDetails'
 import LiveScoreViewer from './routes/join/LiveScoreViewer'
 import OverlayScoreboard from './routes/OverlayScoreboard'
+// add under: import HomeButton from './components/HomeButton'
+import ChatBot from './components/ChatBot'
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
@@ -46,6 +48,8 @@ export default function App() {
 
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
+      // add under: <HomeButton />
+      <ChatBot />
 
       <HomeButton />
     </>
